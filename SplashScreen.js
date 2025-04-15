@@ -1,82 +1,65 @@
-/**
- * Review Screen
- * Date: [08/02/2025]
- * Developer: [R.Maunick]
- * Time: [17:11]
- * Description: This screen acts as the splash/intro screen. This is the first screen the user is greeted with.
- * It has a 'get started' button with a login button below. 
- */
+/* Splash screen V4
 
-import {useEffect, useState, useRef} from 'react';
-import {View, Text, Button, Animated, TouchableOpacity} from 'react-native';
-import {Audio} from 'expo-av';              //importing expo-av for audio playback
-import styles from '../Styles/SplashStyles';
+R.Maunick
+02/02/2025
+11:36
 
+*/
+
+import {View,Text,StyleSheet,Button,Alert} from 'react-native';
+
+//splash-screen componenet/screen
 export default function SplashScreen({ navigation }) {
-  const [sound, setSound] = useState();
-  const fadeAnim = useRef(new Animated.Value(0)).current;     //animated value for logo opacity
-
-  //fade-in animation effect for the logo
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,                 //fully visible
-      duration: 1000,             //animation duration in milliseconds
-      useNativeDriver: true,      //makes use of native driver for better performance
-    }).start();
-  }, [fadeAnim]);
-
-  //unload the sound on cleanup
-  useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
-  const playSound = async () => {
-    const obj = await Audio.Sound.createAsync({
-      uri: 'https://cdn.pixabay.com/download/audio/2024/11/27/audio_c8bcd5259d.mp3?filename=intro-sound-2-269294.mp3',
-    });
-    const { sound } = obj;
-    setSound(sound);
-    await sound.playAsync();
-    console.log('Playing Sound');
-  };
-
-  //handle the Get Started button press
-  const handleGetStarted = async () => {
-    await playSound();                //play the sound effect
-    navigation.navigate('Menu');      //navigate to the Menu screen
-  };
-
-  //handle the Login button press
+  
+  //small funtion to handle the login button press
   const handleLoginPress = () => {
-    navigation.navigate('Login1');    //navigate to the LoginScreen
+    Alert.alert('Login Button', 'This button does nothing for now.', [{ text: 'OK' }]);
   };
 
   return (
     <View style={styles.container}>
-      {/* Logo with fade-in animation */}
-      <Animated.Image
-        source={require('../assets/logo1.png')}
-        style={[styles.logo, { opacity: fadeAnim }]}  //applies animated opacity
-      />
-
-      {/* Text Content */}
-      <Text style={styles.title}>Welcome to Herts Eats!</Text>
+      
+      {/* app main header */}
+      <Text style={styles.title}>Welcome to Herts Eats</Text>   
+      
+      {/* app small description text */}
       <Text style={styles.subtitle}>Delicious meals at your fingertips 😀</Text>
-      <Button title="Get Started" onPress={handleGetStarted} color="#000000" />
+      
+      {/* get Started button - this brings the user to the menu screen */}
+      <Button title="Get Started" onPress={() => navigation.navigate('Menu')} />    {/*brings the user to the menu screen*/}
 
-      {/* Login Button */}
-      <TouchableOpacity style={styles.loginButton} onPress={handleLoginPress}>
-        <Text style={styles.loginButtonText}>Login</Text>
-      </TouchableOpacity>
+      {/* login button - brings user to login page in future, for now justt shows alert when clicked */}
+      <View style={styles.loginButtonContainer}>
+        <Button title="Login" onPress={handleLoginPress} color="#000" />    {/*this shows small alert/pop up message*/}
+      </View>
+
     </View>
   );
 }
 
-
+//all Styles for my splash-screen
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,                      //sets height to full size of screen
+    justifyContent: 'center',     //centers content vertically
+    alignItems: 'center',         //centers content horizontally
+    backgroundColor: '#f5f5f5',   //light grey background for now but this may change in future
+  },
+  title: {
+    fontSize: 28,               //large font size for title/main header
+    fontWeight: 'bold',         //bold text so it pops out to the the user
+    marginBottom: 10,           //spacing below the title, I dont want all the text to be crammed
+  },
+  subtitle: {
+    fontSize: 16,         //medium font size for subtitle/description text
+    marginBottom: 20,     //spacing below the subtitle/description text to make text not look cramed
+    color: '#666',        //slightly faded text color but this may change in future
+  },
+  loginButtonContainer: {
+    position: 'absolute',     //positions the login button at the bottom for now but could change in future or may add icon instad
+    bottom: 40,               //add space from bottom to improve appearance
+    alignSelf: 'center',      //centering horizontally to match theme of app
+  },
+});
 
 

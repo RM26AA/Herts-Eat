@@ -1,241 +1,132 @@
-/**
- * Menu Screen
- * Date: [08/02/2025]
- * Developer: [R.Maunick]
- * Time: [15:45]
- * Description: This screen acts as the menu page. It shows all the food items, has a search bar, option to filter the list, a bottom navigation bar.
- * It can allow the user to add items to their basket, show reviews for each item, favourite an item, go to the favourites page, go to basket page.
- * It can allow the user to double tap on an image to enlarge and decrease plus the user can swipe from right to access the favourites page.
- */
+/* Menu screen V4
 
-import {useState} from 'react';
-import {View, Text, FlatList, Alert, TextInput, Image, TouchableOpacity, Button,} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
-import {GestureHandlerRootView, PanGestureHandler, TapGestureHandler} from 'react-native-gesture-handler';
-import styles from '../Styles/MenuStyles';
-import mockMenu from '../Data/MenuData';
+R.Maunick
+02/02/2025
+11:27
 
-export default function MenuScreen({ navigation, basket, setBasket, favorites, setFavorites }) {
-  const [selectedImageId, setSelectedImageId] = useState(null);     //tracks the enlarged image
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [searchQuery, setSearchQuery] = useState('');
+*/
 
-  //filtered menu items based on category and search query
-  const filteredMenu = mockMenu.filter((item) => {
-    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+import {View,Text,StyleSheet,FlatList,Alert,Button,TouchableOpacity} from 'react-native';
 
-  const addToBasket = (item) => {
-    const itemExists = basket.find((basketItem) => basketItem.id === item.id);
-    if (itemExists) {
-      setBasket(
-        basket.map((basketItem) =>
-          basketItem.id === item.id
-            ? { ...basketItem, quantity: basketItem.quantity + 1 }
-            : basketItem
-        )
-      );
-    } else {
-      setBasket([...basket, { ...item, quantity: 1 }]);
-    }
-    Alert.alert('Item Added', `${item.name} has been added to your basket!`, [{ text: 'OK' }]);
-  };
+//mock menu data, this may be altered in the future
+const mockMenu = [
+  { id: '1', name: 'Margherita Pizza', price: '£10.99' },       //main meal
+  { id: '2', name: 'Cheeseburger', price: '£8.99' },            //main meal
+  { id: '3', name: 'Caesar Salad', price: '£7.99' },            //starter meal
+  { id: '4', name: 'Spaghetti Bolognese', price: '£12.99' },    //main meal
+  { id: '5', name: 'Cheesy Pasta', price: '£14.99' },           //main meal
+  { id: '6', name: 'Chicken Burrito', price: '£9' },            //main meal
+  { id: '7', name: 'Spicy Wings', price: '£7.99' },             //starter meal
+  { id: '8', name: 'Sushi', price: '£10' },                     //starter meal
+  { id: '9', name: 'Ramen Noodles', price: '£8' },              //main meal
+  { id: '10', name: 'Fries plus Drink', price: '£6.99' },       //starter meal
+];
 
-  const addToFavorites = (item) => {
-    const isFavorite = favorites.find((favItem) => favItem.id === item.id);
-    if (isFavorite) {
-      setFavorites(favorites.filter((favItem) => favItem.id !== item.id));
-    } else {
-      setFavorites([...favorites, item]);
-    }
-  };
-
-  const isFavorite = (item) => favorites.some((favItem) => favItem.id === item.id);
-
-  //handle double-tap to enlarge or shrink the image
-  const handleDoubleTap = (itemId) => {
-    if (selectedImageId === itemId) {
-      setSelectedImageId(null); //shrinks back to normal
-    } else {
-      setSelectedImageId(itemId); //enlarge the tapped image
-    }
-  };
-
-  //handle swipe gesture
-  const handleSwipeGesture = (event) => {
-    const { translationX } = event.nativeEvent;
-    if (translationX < -150) {
-      //navigate to Favorites if swipe gesture is detected
-      navigation.navigate('Favorites');
-    }
+//menu-screen component/screen
+export default function MenuScreen({ navigation }) {
+  
+  //small function to handle alert messages
+  const handleAlert = (message) => {
+    Alert.alert('Feature Coming Soon', message);    
   };
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <PanGestureHandler onGestureEvent={handleSwipeGesture}>
-        <FlatList
-          data={filteredMenu}
-          keyExtractor={(item) => item.id}
-          ListHeaderComponent={
-            <View style={styles.headerContainer}>
-              {/* Title */}
-              <Text style={styles.title}>Food Menu</Text>
-
-              {/* Search Bar */}
-              <TextInput
-                style={styles.searchBar}
-                placeholder="Search for items..."
-                value={searchQuery}
-                onChangeText={(text) => setSearchQuery(text)}
-              />
-
-              {/* Filter Buttons */}
-              <View style={styles.filterContainer}>
-                {['All', 'Starters', 'Mains', 'Desserts'].map((category) => (
-                  <TouchableOpacity
-                    key={category}
-                    style={[
-                      styles.filterButton,
-                      selectedCategory === category && styles.selectedFilter,
-                    ]}
-                    onPress={() => setSelectedCategory(category)}
-                  >
-                    <Text
-                      style={[
-                        styles.filterText,
-                        selectedCategory === category && styles.selectedFilterText,
-                      ]}
-                    >
-                      {category}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
-          }
-          renderItem={({ item }) => (
-            <View style={styles.itemContainer}>
-              {/* Image with double-tap functionality */}
-              <TapGestureHandler
-                numberOfTaps={2}
-                onActivated={() => handleDoubleTap(item.id)}
-              >
-                <Image
-                  source={item.image}
-                  style={[
-                    styles.itemImage,
-                    selectedImageId === item.id && styles.enlargedImage,  //conditionally enlarge the image
-                  ]}
-                />
-              </TapGestureHandler>
-
-              {/* Details */}
-              <View style={styles.textContent}>
-                <Text style={styles.itemTitle}>{item.name}</Text>
-                <View style={styles.ratingContainer}>
-                  <Ionicons name="star" size={16} color="gold" />
-                  <Text style={styles.ratingText}>{item.rating}/5</Text>
-                </View>
-                <Text style={styles.descriptionText}>{item.description}</Text>
-
-                {/* Price */}
-                <Text style={styles.priceText}>Price: £{item.price.toFixed(2)}</Text>
-                
-
-              </View>
-
-              {/* Preparation Time and Delivery Cost */}
-              <View style={styles.iconRow}>
-                <View style={styles.iconTextContainer}>
-                  <Ionicons name="time-outline" size={16} color="#555" />
-                  <Text style={styles.iconText}>{item.preparationTime}</Text>
-                </View>
-                <View style={styles.iconTextContainer}>
-                  <Ionicons name="car-outline" size={16} color="#555" />
-                  <Text style={styles.iconText}>{item.deliveryCost}</Text>
-                </View>
-              </View>
-
-              {/* Actions */}
-              <View style={styles.actions}>
-                <Button title="Add to Basket" onPress={() => addToBasket(item)} color="#3cc9b9" />
-                <Button
-                  title="See Review"
-                  onPress={() =>
-                    navigation.navigate('Review', { itemId: item.id, itemName: item.name })
-                  }
-                  color="#3cc9b9"
-                />
-                <TouchableOpacity onPress={() => addToFavorites(item)}>
-                  <Ionicons
-                    name={isFavorite(item) ? 'heart' : 'heart-outline'}
-                    size={24}
-                    color={isFavorite(item) ? 'red' : 'gray'}
-                  />
-                </TouchableOpacity>
-              </View>
-
-              {/* View More Button */}
-              <TouchableOpacity
-                style={styles.viewMoreButton}
-                onPress={() => navigation.navigate('ViewMore', { item, basket, setBasket })}
-              >
-                <Text style={styles.viewMoreButtonText}>View More</Text>
-              </TouchableOpacity>
-
-
-            
-            </View>
-          )}
-          ListFooterComponent={
-            <View style={styles.footerContainer}>
-              <TouchableOpacity
-                style={styles.singleButtonContainer}
-                onPress={() => navigation.navigate('Favorites')}
-              >
-                <Text style={styles.buttonText}>View Favorites</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.singleButtonContainer}
-                onPress={() => navigation.navigate('Basket')}
-              >
-                <Text style={styles.buttonText}>View Basket</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>Menu</Text>
+      <FlatList
+        data={mockMenu}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.itemContainer}>
+            <View style={styles.itemRow}>
+              <Text style={styles.itemText}>
+                {item.name} - {item.price}
+              </Text>
+              <TouchableOpacity onPress={() => handleAlert(`Added ${item.name} to Favourites`)}>    
+                <Text style={styles.favouriteText}>Favourite</Text>
               </TouchableOpacity>
             </View>
-          }
-          style={{ flex: 1 }}
-        />
-      </PanGestureHandler>
-
-      {/* Bottom Navigation Bar */}
-      <View style={styles.bottomNavBar}>
-        <TouchableOpacity onPress={() => navigation.navigate('Splash')} style={styles.navItem}>
-          <Ionicons name="home-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Favorites')} style={styles.navItem}>
-          <Ionicons name="heart-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Favorites</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Basket')} style={styles.navItem}>
-          <Ionicons name="cart-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Basket</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Login1')} style={styles.navItem}>
-          <Ionicons name="person-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>User</Text>
-        </TouchableOpacity>
-      </View>
-
-    </GestureHandlerRootView>
+            <Button
+              title="Add to Basket"
+              onPress={() => handleAlert(`Added ${item.name} to the basket`)}   
+            />
+            <TouchableOpacity
+              style={styles.reviewButton}
+              onPress={() => handleAlert(`See reviews for ${item.name}`)}   
+            >
+              <Text style={styles.reviewButtonText}>See Review</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => navigation.navigate('OrderForm')}    
+      >
+        <Text style={styles.actionButtonText}>View Basket</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={() => handleAlert('View Favourites Feature Coming Soon!')}   
+      >
+        <Text style={styles.actionButtonText}>View Favourites</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
-
-
-
-
-
+//all styles for my menu screen
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,                      //makes use of the full screen for the height
+    padding: 20,                  //adds padding around the edges
+    backgroundColor: '#f5f5f5',   //light gray background for contrast, this may change in the future
+  },
+  title: {
+    fontSize: 24,           //large font size for the title/main header
+    fontWeight: 'bold',     //bold text for emphasis, to pop out to user
+    marginBottom: 10,       //space below the title so text is not crammed
+  },
+  itemContainer: {
+    padding: 10,                  //inner spacing for each menu item
+    marginBottom: 10,             //space between different menu items
+    backgroundColor: '#e0e0e0',   //light gray background for each item, may change in the future
+    borderRadius: 5,              //rounded corners for a improved look
+  },
+  itemRow: {
+    flexDirection: 'row',             //align items horizontally
+    justifyContent: 'space-between',  //space out text and buttons evenly
+    alignItems: 'center',             //align items to the center to match theme
+  },
+  itemText: {
+    fontSize: 18,        //medium font size for menu items
+  },
+  favouriteText: {
+    fontSize: 14,       //smaller font size for favourite text
+    color: '#007bff',   //blue text to indicate interactivity, colour may change in future
+  },
+  reviewButton: {
+    marginTop: 10,                //space above the review button
+    alignSelf: 'flex-start',      //aligns to the start of the row
+    padding: 5,                   //padding for comfortable touch area
+    backgroundColor: '#3cc9b9',   //teal background colour, may change in future
+    borderRadius: 5,              //rounded corners for button, match theme
+  },
+  reviewButtonText: {
+    color: '#fff',        //white text for contrast
+    fontSize: 14,         //small font size
+  },
+  actionButton: {
+    backgroundColor: '#3cc9b9',       //teal background colour for actions, may change in the future
+    padding: 15,                      //inner padding for comfortable clicking
+    borderRadius: 8,                  //rounded corners for styling
+    alignItems: 'center',             //center text inside button
+    marginVertical: 10,               //space between action buttons for improved appearance
+  },
+  actionButtonText: {
+    color: '#fff',              //white text colour for visibility
+    fontSize: 16,               //medium font size
+    fontWeight: 'bold',         //bold text for emphasis, pop out to user
+  },
+});
 
