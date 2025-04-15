@@ -1,11 +1,43 @@
-# Sample Snack app
+# 🍽️ Herts Eats
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+**Herts Eats** is a student-centered food ordering mobile application built using **React Native**. Designed for the University of Hertfordshire community, it allows users to browse meals, manage favorites, add items to their basket, submit reviews, and securely place orders — all with a clean and intuitive UI.
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo cli](https://docs.expo.dev/get-started/installation/#expo-cli)).
+---
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+## 🚀 Features
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.dev/c/expo-dev-tools/61) or [Discord](https://chat.expo.dev/).
+- 🏠 Splash and Login/Signup Screens  
+- 📋 View full interactive food menu  
+- 🔍 Search and filter by category  
+- ❤️ Add/remove favorites  
+- 🛒 Add items to basket with quantity controls  
+- 💬 Submit and view food reviews  
+- 🧾 Contact Us page with file upload and social media links  
+- 💳 Payment confirmation with total calculation  
+- 🧠 AsyncStorage for user and account data persistence  
+- 🔐 Input validation and smooth user interactions
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+---
+
+## 📱 Tech Stack
+
+- **React Native**
+- **Expo**
+- **React Navigation**
+- **AsyncStorage**
+- **Gesture Handler**
+- **React Native Paper**
+- **React Native Maps** *(optional)*
+- **Expo Document Picker**
+
+---
+
+## Notes
+-To enable file picking, the app uses expo-document-picker.
+-If maps are enabled, ensure the correct permissions are added (can be toggled off).
+-Firebase/Auth can be added for real authentication and backend support.
+
+## Contact
+Built by [Romeo Maunick]
+For the University of Hertfordshire – Software Project
+Feel free to reach out via the app's Contact Us page!
