@@ -38,6 +38,6 @@
 - Firebase/Auth can be added for real authentication and backend support.
 
 ## Contact
-Built by [Romeo Maunick]
-For the University of Hertfordshire – Software Project
-Feel free to reach out via the app's Contact Us page!
+- Built by Romeo Maunick
+- For the University of Hertfordshire – Software Project
+- Feel free to reach out via the app's Contact Us page!
