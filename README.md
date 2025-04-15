@@ -33,9 +33,9 @@
 ---
 
 ## Notes
--To enable file picking, the app uses expo-document-picker.
--If maps are enabled, ensure the correct permissions are added (can be toggled off).
--Firebase/Auth can be added for real authentication and backend support.
+- To enable file picking, the app uses expo-document-picker.
+- If maps are enabled, ensure the correct permissions are added (can be toggled off).
+- Firebase/Auth can be added for real authentication and backend support.
 
 ## Contact
 Built by [Romeo Maunick]
